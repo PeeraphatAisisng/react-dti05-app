@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar.jsx';
 import bikesBeardsImg from '../ReactTailwindWS01/Bikes and beards 1.png';
 import learnifyImg from '../ReactTailwindWS01/Learnify 1.png';
@@ -8,22 +8,6 @@ import edtechImg from '../ReactTailwindWS01/EdTech 1.png';
 export default function Portfolio() {
   const pc = { color: 'yellow' };
   const [lightbox, setLightbox] = useState(null);
-  // handlers for subtle 3D tilt / parallax effect on desktop
-  function handleCardMove(e) {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) - rect.width / 2;
-    const y = (e.clientY - rect.top) - rect.height / 2;
-    const rotateX = (-y / rect.height) * 6; // tilt intensity
-    const rotateY = (x / rect.width) * 6;
-    card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(8px) scale(1.02)`;
-    card.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2 + 8}px 30px rgba(0,0,0,0.48), 0 6px 18px rgba(0,0,0,0.35)`;
-  }
-  function handleCardLeave(e) {
-    const card = e.currentTarget;
-    card.style.transform = '';
-    card.style.boxShadow = '';
-  }
   const items = [ 
      {
       id: 1,
@@ -63,12 +47,7 @@ export default function Portfolio() {
           {items.map((item, idx) => (
             <section key={item.id} className="grid md:grid-cols-2 gap-8 items-center portfolio-section" data-idx={idx}>
               <div className={`${idx % 2 === 1 ? 'md:order-2' : 'md:order-1'} flex items-center justify-center`}> 
-                <div
-                  className="card w-full glass-card"
-                  style={{ animationDelay: `${idx * 120}ms` }}
-                  onMouseMove={handleCardMove}
-                  onMouseLeave={handleCardLeave}
-                >
+                <div className="card w-full glass-card" style={{ animationDelay: `${idx * 120}ms` }}>
                   <img src={item.img} alt={item.title} className="card-img rounded-2xl shadow-2xl object-cover w-full max-h-72 md:max-h-96" />
                 </div>
               </div>

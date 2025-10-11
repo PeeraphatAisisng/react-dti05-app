@@ -213,3 +213,55 @@ button:hover { transform: translateY(-3px); }
   .glass-card, .lightbox-content { transition: none !important; animation: none !important; }
 }
 
+/* Card lift + glow effect (CSS-only) */
+.card {
+  position: relative; /* for glow pseudo */
+  overflow: visible;
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -10px;
+  height: 28px;
+  border-radius: 14px;
+  background: radial-gradient(closest-side, rgba(123,97,255,0.14), rgba(255,154,68,0.06));
+  filter: blur(18px);
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 260ms ease, transform 260ms cubic-bezier(.2,.9,.2,1), filter 260ms ease;
+  pointer-events: none;
+}
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 26px 54px rgba(0,0,0,0.55), 0 6px 18px rgba(123,97,255,0.08);
+}
+.card:hover::before {
+  opacity: 1;
+  transform: scale(1.04);
+  filter: blur(22px);
+}
+.card .card-img {
+  transition: transform 360ms cubic-bezier(.2,.9,.2,1), filter 360ms ease;
+}
+.card:hover .card-img {
+  transform: scale(1.03) rotate(-0.25deg);
+  filter: saturate(1.06) contrast(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card::before, .card .card-img { transition: none !important; animation: none !important; }
+  .card:hover { transform: none; box-shadow: none; }
+}
+
+/* Make portfolio cards visible by default (override entrance animation hiding) */
+.portfolio-section .card {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+
+
