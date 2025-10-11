@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
 import bikesBeardsImg from '../ReactTailwindWS01/Bikes and beards 1.png';
 import learnifyImg from '../ReactTailwindWS01/Learnify 1.png';
@@ -6,6 +6,7 @@ import figmaCommunityImg from '../ReactTailwindWS01/Figma to HTML (Community) 1.
 import edtechImg from '../ReactTailwindWS01/EdTech 1.png';
 
 export default function Portfolio() {
+  usePortfolioObserver();
   const pc = { color: 'yellow' };
   const [lightbox, setLightbox] = useState(null);
   const items = [ 
@@ -84,22 +85,33 @@ export default function Portfolio() {
     </>
   );
 }
+// Attach IntersectionObserver inside the component lifecycle to avoid
+// referencing `window`/`document` during SSR or before DOM is ready.
+// This also provides cleanup so observers don't leak.
 
-function _attachObserver() {
-  if (typeof window === 'undefined') return;
-  const obs = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-        }
-      });
-    },
-    { threshold: 0.18 }
-  );
-  document.querySelectorAll('.portfolio-section').forEach((el) => obs.observe(el));
+function usePortfolioObserver() {
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      },
+      { threshold: 0.18 }
+    );
+
+    const els = Array.from(document.querySelectorAll('.portfolio-section'));
+    els.forEach((el) => obs.observe(el));
+
+    // small delay to allow page paint (similar to previous setTimeout)
+    return () => {
+      els.forEach((el) => obs.unobserve(el));
+      obs.disconnect();
+    };
+  }, []);
 }
 
-if (typeof window !== 'undefined') {
-  setTimeout(_attachObserver, 300);
-}
